@@ -1,10 +1,18 @@
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind;
+const readline = require('readline');
 
 const Globals = {
     currentHeight: undefined,
-    blockHash: undefined,
+    nextRound: undefined,
     chickenDinner: undefined
 };
+
+const Bets = [];
+
+const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+  });
 
 const daemon = new TurtleCoind({
     host: '127.0.0.1',
@@ -15,9 +23,16 @@ const daemon = new TurtleCoind({
 
 async function update() {
     Globals.currentHeight = await daemon.getBlockCount();
-    Globals.blockHash = await daemon.getBlockHash({height: Globals.currentHeight});
-    Globals.chickenDinner = Globals.blockHash.slice(-1);
-    console.log(Globals);
+    Globals.nextRound = Math.ceil(Globals.currentHeight / 10) * 10;
+    if (Globals.nextRound === Globals.currentHeight) {
+        daemon.getBlockHash({
+            height: Globals.currentHeight
+        }).then((blockHash) => {
+            Globals.chickenDinner = blockHash.slice(-1);
+        })
+    }
+    //console.log(Globals);
+    //console.log(Bets);
 }
 
 async function init() {
@@ -28,3 +43,9 @@ async function init() {
 (async () => {
     await init();
 })()
+
+rl.question('What character will be the last digit of the next round block?', (answer) => {
+    Bets.push(answer);
+    console.log(`Your bet has been recorded: ${answer}`);
+    rl.close();
+  });
