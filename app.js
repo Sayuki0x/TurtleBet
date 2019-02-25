@@ -29,10 +29,15 @@ async function update() {
             height: Globals.currentHeight
         }).then((blockHash) => {
             Globals.chickenDinner = blockHash.slice(-1);
+            if (Array.prototype.slice.call((Object.values(Globals))).every(x => x === Globals.chickenDinner)) {
+                console.log(`WINRAR!`)
+            } else {
+                console.log(`You lose!`)
+            }
         })
     }
-    //console.log(Globals);
-    //console.log(Bets);
+    console.log(Globals);
+    console.log(Bets);
 }
 
 async function init() {
