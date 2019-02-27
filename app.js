@@ -23,15 +23,11 @@ async function update() {
     if (Globals.nextRound === undefined) {
         Globals.nextRound = initRound(Globals.currentHeight);
     }
-    if (Globals.nextRound <= Globals.currentHeight) {
-        daemon.getBlockHash({
-            height: Globals.nextRound
-        }).then((blockHash) => {
-            Globals.winningHash = blockHash;
-            Globals.chickenDinner = blockHash.slice(-1);
-            Globals.nextRound + 10;
-        })
-    }
+    Globals.winningHash = await daemon.getBlockHash({
+        height: Globals.nextRound
+    })
+    Globals.chickenDinner = Globals.winningHash.slice(-1);
+    Globals.nextRound += 10;
     console.log(Globals);
 }
 
