@@ -14,22 +14,22 @@ const daemon = new TurtleCoind({
     ssl: false
 });
 
-function initRound() {
-    Math.ceil(Globals.currentHeight / 10) * 10;
+function initRound(x) {
+    return Math.ceil(x / 10) * 10;
 }
 
 async function update() {
     Globals.currentHeight = await daemon.getBlockCount(); 
     if (Globals.nextRound === undefined) {
-        Globals.nextRound = initRound();
+        Globals.nextRound = initRound(Globals.currentHeight);
     }
-    if (Globals.nextRound >= Globals.currentHeight) {
+    if (Globals.nextRound <= Globals.currentHeight) {
         daemon.getBlockHash({
             height: Globals.nextRound
         }).then((blockHash) => {
             Globals.winningHash = blockHash;
             Globals.chickenDinner = blockHash.slice(-1);
-            Globals.nextRound = Globals.nextRound + 10;
+            Globals.nextRound + 10;
         })
     }
     console.log(Globals);
