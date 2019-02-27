@@ -1,18 +1,11 @@
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind;
-const readline = require('readline');
 
 const Globals = {
     currentHeight: undefined,
     nextRound: undefined,
+    winningHash: undefined,
     chickenDinner: undefined
 };
-
-const Bets = [];
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
 
 const daemon = new TurtleCoind({
     host: '127.0.0.1',
@@ -21,23 +14,25 @@ const daemon = new TurtleCoind({
     ssl: false
 });
 
+function initRound() {
+    Math.ceil(Globals.currentHeight / 10) * 10;
+}
+
 async function update() {
-    Globals.currentHeight = await daemon.getBlockCount();
-    Globals.nextRound = Math.ceil(Globals.currentHeight / 10) * 10;
-    if (Globals.nextRound === Globals.currentHeight) {
+    Globals.currentHeight = await daemon.getBlockCount(); 
+    if (Globals.nextRound === undefined) {
+        Globals.nextRound = initRound();
+    }
+    if (Globals.nextRound >= Globals.currentHeight) {
         daemon.getBlockHash({
-            height: Globals.currentHeight
+            height: Globals.nextRound
         }).then((blockHash) => {
+            Globals.winningHash = blockHash;
             Globals.chickenDinner = blockHash.slice(-1);
-            if (Array.prototype.slice.call((Object.values(Globals))).every(x => x === Globals.chickenDinner)) {
-                console.log(`WINRAR!`)
-            } else {
-                console.log(`You lose!`)
-            }
+            Globals.nextRound = Globals.nextRound + 10;
         })
     }
     console.log(Globals);
-    console.log(Bets);
 }
 
 async function init() {
@@ -48,9 +43,3 @@ async function init() {
 (async () => {
     await init();
 })()
-
-rl.question('What character will be the last digit of the next round block?', (answer) => {
-    Bets.push(answer);
-    console.log(`Your bet has been recorded: ${answer}`);
-    rl.close();
-  });
