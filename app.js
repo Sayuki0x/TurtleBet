@@ -1,9 +1,8 @@
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind;
+const db = require('quick.db');
 
 const Globals = {
-    currentHeight: undefined,
     nextRound: undefined,
-    winningHash: undefined,
     chickenDinner: undefined
 };
 
@@ -19,31 +18,17 @@ function initRound(x) {
 }
 
 async function update() {
-    Globals.currentHeight = await daemon.getBlockCount(); 
+    let currentHeight = await daemon.getBlockCount();
     if (Globals.nextRound === undefined) {
-        Globals.nextRound = initRound(Globals.currentHeight);
+        Globals.nextRound = initRound(currentHeight);
     }
-
-    /*
-    Globals.winningHash = await daemon.getBlockHash({
-        height: Globals.nextRound
-    });
-    if (Globals.nextRound <= Globals.currentHeight) {
-        Globals.chickenDinner = Globals.winningHash.slice(-1);
-        Globals.nextRound += 10;
-    }
-    */
-
-    if (Globals.nextRound <= Globals.currentHeight) {
-        daemon.getBlockHash({
+    if (Globals.nextRound < currentHeight) {
+        let blockHeader = await daemon.getBlockHeaderByHeight({
             height: Globals.nextRound
-        }).then((blockHash) => {
-            Globals.winningHash = blockHash;
-            Globals.chickenDinner = blockHash.slice(-1);
-            Globals.nextRound += 10;
-        }).catch(function() {
-            console.log('** RPC Error');
-        });
+        })
+        winningHash = blockHeader.hash;
+        Globals.chickenDinner = winningHash.slice(-1);
+        Globals.nextRound += 10;
     }
     console.log(Globals);
 }

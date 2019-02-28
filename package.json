@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ExtraHash/TurtleBet#readme",
   "dependencies": {
+    "quick.db": "^7.0.0-b21",
     "turtlecoin-rpc": "^0.12.4"
   }
 }
