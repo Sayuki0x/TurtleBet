@@ -7,9 +7,9 @@ const Globals = {
 };
 
 const daemon = new TurtleCoind({
-    host: '127.0.0.1',
+    host: 'extrahash.tk',
     port: 11898,
-    timeout: 2000,
+    timeout: 10000,
     ssl: false
 });
 
@@ -21,6 +21,7 @@ async function update() {
     let currentHeight = await daemon.getBlockCount();
     if (Globals.nextRound === undefined) {
         Globals.nextRound = initRound(currentHeight);
+        console.log('Winning hash collector started...')
     }
     if (Globals.nextRound < currentHeight) {
         let blockHeader = await daemon.getBlockHeaderByHeight({
@@ -28,9 +29,10 @@ async function update() {
         })
         winningHash = blockHeader.hash;
         Globals.chickenDinner = winningHash.slice(-1);
+        db.set(`${Globals.nextRound}`, { winningHash: `${winningHash}`});
+        console.log(`Winner Winner Chicken Dinner! Stored round ${currentHeight} hash in database: ${winningHash}`)
         Globals.nextRound += 10;
     }
-    console.log(Globals);
 }
 
 async function init() {
