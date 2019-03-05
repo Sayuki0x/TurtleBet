@@ -1,8 +1,8 @@
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind;
 const db = require('quick.db');
 
-
 const Globals = {
+    currentHeight: undefined,
     nextRound: undefined,
     chickenDinner: undefined
 };
@@ -19,20 +19,27 @@ function initRound(x) {
 }
 
 async function update() {
-    let currentHeight = await daemon.getBlockCount();
+    try {
+        Globals.currentHeight = await daemon.getBlockCount();
+    } catch (err) {
+        // console.log(err);
+        return;
+    } 
     if (Globals.nextRound === undefined) {
-        Globals.nextRound = initRound(currentHeight);
-        console.log('** Winning hash collector started...')
+        Globals.nextRound = initRound(Globals.currentHeight);
+        db.set(`${Globals.nextRound}`, { winningHash: undefined });
+        console.log('** TurtleBet started...')
     }
-    if (Globals.nextRound < currentHeight) {
+    if (Globals.nextRound < Globals.currentHeight) {
         let blockHeader = await daemon.getBlockHeaderByHeight({
             height: Globals.nextRound
         })
         winningHash = blockHeader.hash;
         Globals.chickenDinner = winningHash.slice(-1);
         db.set(`${Globals.nextRound}`, { winningHash: `${winningHash}`});
-        console.log(`** Winner Winner Chicken Dinner! Stored round ${currentHeight} hash in database: ${winningHash}`)
+        console.log(`** Winner Winner Chicken Dinner! Stored round ${Globals.nextRound} hash in database: ${winningHash}`)
         Globals.nextRound += 10;
+        db.set(`${Globals.nextRound}`, { winningHash: undefined });
     }
 }
 
