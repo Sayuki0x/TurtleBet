@@ -40,6 +40,4 @@ async function init() {
     setInterval(update, 1000);
 }
 
-(async () => {
-    await init();
-})()
+init();
