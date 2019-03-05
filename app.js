@@ -4,7 +4,6 @@ const db = require('quick.db');
 const Globals = {
     currentHeight: undefined,
     nextRound: undefined,
-    chickenDinner: undefined
 };
 
 const daemon = new TurtleCoind({
@@ -18,34 +17,54 @@ function initRound(x) {
     return (Math.ceil(x / 10) * 10);
 }
 
+function payRound() {
+    // check if any user's bets match the winning hash
+}
+
 async function update() {
     try {
-        Globals.currentHeight = await daemon.getBlockCount();
+        currentHeight = await daemon.getBlockCount();
+        Globals.currentHeight = currentHeight;
     } catch (err) {
-        // console.log(err);
+        console.log(err);
         return;
     } 
+
     if (Globals.nextRound === undefined) {
         Globals.nextRound = initRound(Globals.currentHeight);
         db.set(`${Globals.nextRound}`, { winningHash: undefined });
         console.log('** TurtleBet started...')
     }
+
     if (Globals.nextRound < Globals.currentHeight) {
-        let blockHeader = await daemon.getBlockHeaderByHeight({
-            height: Globals.nextRound
-        })
-        winningHash = blockHeader.hash;
-        Globals.chickenDinner = winningHash.slice(-1);
-        db.set(`${Globals.nextRound}`, { winningHash: `${winningHash}`});
-        console.log(`** Winner Winner Chicken Dinner! Stored round ${Globals.nextRound} hash in database: ${winningHash}`)
-        Globals.nextRound += 10;
-        db.set(`${Globals.nextRound}`, { winningHash: undefined });
+        try {
+            let blockHeader = await daemon.getBlockHeaderByHeight({
+                height: Globals.nextRound
+            })
+            db.set(`${Globals.nextRound}`, { winningHash: `${blockHeader.hash}`});
+            console.log(`** Winner Winner Chicken Dinner! Stored round ${Globals.nextRound} hash in database: ${blockHeader.hash}`);
+            if (db.get(`${Globals.nextRound}`.winningHash) === winningHash) {
+                Globals.nextRound += 10;
+                db.set(`${Globals.nextRound}`, { winningHash: 'undefined'});
+            }
+        } catch (err) {
+            console.log(err);
+            return;
+        }
     }
+
+    console.log(Globals);
 }
 
 async function init() {
     await update();
     setInterval(update, 1000);
 }
+
+(async () => {
+
+    
+    await init();
+})()
 
 init();
