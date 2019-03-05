@@ -1,6 +1,7 @@
 const TurtleCoind = require('turtlecoin-rpc').TurtleCoind;
 const db = require('quick.db');
 
+
 const Globals = {
     nextRound: undefined,
     chickenDinner: undefined
@@ -21,7 +22,7 @@ async function update() {
     let currentHeight = await daemon.getBlockCount();
     if (Globals.nextRound === undefined) {
         Globals.nextRound = initRound(currentHeight);
-        console.log('Winning hash collector started...')
+        console.log('** Winning hash collector started...')
     }
     if (Globals.nextRound < currentHeight) {
         let blockHeader = await daemon.getBlockHeaderByHeight({
@@ -30,7 +31,7 @@ async function update() {
         winningHash = blockHeader.hash;
         Globals.chickenDinner = winningHash.slice(-1);
         db.set(`${Globals.nextRound}`, { winningHash: `${winningHash}`});
-        console.log(`Winner Winner Chicken Dinner! Stored round ${currentHeight} hash in database: ${winningHash}`)
+        console.log(`** Winner Winner Chicken Dinner! Stored round ${currentHeight} hash in database: ${winningHash}`)
         Globals.nextRound += 10;
     }
 }
