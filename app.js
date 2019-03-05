@@ -4,6 +4,7 @@ const db = require('quick.db');
 const Globals = {
     currentHeight: undefined,
     nextRound: undefined,
+    winningHash: undefined,
 };
 
 const daemon = new TurtleCoind({
@@ -41,11 +42,15 @@ async function update() {
             let blockHeader = await daemon.getBlockHeaderByHeight({
                 height: Globals.nextRound
             })
+            if ( blockHeader.hash !== undefined ) {
+                Globals.winningHash = blockHeader.hash;
+            }
             db.set(`${Globals.nextRound}`, { winningHash: `${blockHeader.hash}`});
             console.log(`** Winner Winner Chicken Dinner! Stored round ${Globals.nextRound} hash in database: ${blockHeader.hash}`);
-            if (db.get(`${Globals.nextRound}`.winningHash) === winningHash) {
+            if (db.get(`${Globals.nextRound}.winningHash`) === Globals.winningHash) {
                 Globals.nextRound += 10;
                 db.set(`${Globals.nextRound}`, { winningHash: 'undefined'});
+                console.log(`Stored new round height: ${Globals.nextRound}`);
             }
         } catch (err) {
             console.log(err);
@@ -62,8 +67,6 @@ async function init() {
 }
 
 (async () => {
-
-    
     await init();
 })()
 
