@@ -27,7 +27,7 @@ async function update() {
         currentHeight = await daemon.getBlockCount();
         Globals.currentHeight = currentHeight;
     } catch (err) {
-        console.log(err);
+        // console.log(err);
         return;
     } 
 
@@ -44,6 +44,8 @@ async function update() {
             })
             if ( blockHeader.hash !== undefined ) {
                 Globals.winningHash = blockHeader.hash;
+            } else {
+                return;
             }
             db.set(`${Globals.nextRound}`, { winningHash: `${blockHeader.hash}`});
             console.log(`** Winner Winner Chicken Dinner! Stored round ${Globals.nextRound} hash in database: ${blockHeader.hash}`);
@@ -51,14 +53,16 @@ async function update() {
                 Globals.nextRound += 10;
                 db.set(`${Globals.nextRound}`, { winningHash: 'undefined'});
                 console.log(`Stored new round height: ${Globals.nextRound}`);
+            } else {
+                return;
             }
         } catch (err) {
-            console.log(err);
+            // console.log(err);
             return;
         }
     }
 
-    console.log(Globals);
+    // console.log(Globals);
 }
 
 async function init() {
