@@ -1,5 +1,5 @@
 const db = require('quick.db');
-const userName = 'testuser';
-const bet = '123456';
+const userName = 'admin';
+const bet = '1234567';
 
-db.push(`1291900.bets.${userName}`, `${bet}`);
+db.push(`1309670.bets.${userName}`, `${bet}`);
