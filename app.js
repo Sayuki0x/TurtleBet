@@ -8,7 +8,7 @@ const Globals = {
 };
 
 const daemon = new TurtleCoind({
-    host: 'extrahash.tk',
+    host: 'localhost',
     port: 11898,
     timeout: 10000,
     ssl: false
@@ -46,9 +46,10 @@ function payRound() {
 */
 
 async function update() {
+
     try {
         currentHeight = await daemon.getBlockCount();
-        console.log(`Successfully assigned temporary variable currentHeight: ${currentHeight}`);
+        console.log(`Assigned temporary variable currentHeight = ${currentHeight}`);
         Globals.currentHeight = currentHeight;
         console.log(`Assigned Globals.currentHeight = ${Globals.currentHeight}`);
     } catch (err) {
@@ -60,30 +61,25 @@ async function update() {
     if (Globals.nextRound === undefined) {
         console.log(`Globals.nextRound is undefined, calculating first round height:`)
         Globals.nextRound = initRound(Globals.currentHeight);
-        db.set(`${Globals.nextRound}`, { winningHash: undefined });
-        console.log(`First round height set = ${Globals.nextRound}`);
+        db.set(`${Globals.nextRound}`, { undefined });
+        console.log(`First round height = ${Globals.nextRound}`);
         console.log('** TurtleBet started...');
     }
 
+    console.log(`Assigned Globals.winningHash = ${Globals.winningHash}`);
+
     if (Globals.nextRound < Globals.currentHeight) {
+        let winningRound = Globals.nextRound;
+        Globals.nextRound += 10;
         console.log(`Current height is greater than round height...`)
         try {
             let blockHeader = await daemon.getBlockHeaderByHeight({
-                height: Globals.nextRound
+                height: winningRound
             });
             Globals.winningHash = blockHeader.hash;
-            console.log(`Set Globals.winningHash: ${Globals.winningHash}`);
-            db.push(`${Globals.nextRound}.winningHash`, `${Globals.winningHash}`);
-            let doubleCheck = await db.get(`${Globals.nextRound}.winningHash`);
-            console.log(`Discount Doublecheck: ${doubleCheck}`);
-            if (doubleCheck === Globals.winningHash) {
-                Globals.nextRound += 10;
-                db.set(`${Globals.nextRound}`, { winningHash: 'undefined'});
-                console.log(`Stored new round height: ${Globals.nextRound}`);
-            } else {
-                console.log('doubleCheck does not match Globals.winningHash');
-                return;
-            }
+            db.set(`${winningRound}.winningHash`, `${Globals.winningHash}`);
+            db.set(`${Globals.nextRound}`, { undefined });
+            console.log(`Stored new round height = ${Globals.nextRound}`);
         } catch (err) {
             // console.log(err);
             return;
