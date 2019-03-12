@@ -2,9 +2,10 @@
   "name": "turtlebet",
   "version": "0.0.1",
   "description": "Bet on the TurtleCoin blockchain!",
-  "main": "app.js",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,9 @@
   },
   "homepage": "https://github.com/ExtraHash/TurtleBet#readme",
   "dependencies": {
+    "express": "^4.16.4",
     "quick.db": "^7.0.0-b21",
     "turtlecoin-rpc": "^0.12.4"
-  }
+  },
+  "devDependencies": {}
 }
