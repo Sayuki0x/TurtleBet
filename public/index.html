@@ -1,29 +1,57 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>TurtleBet</title>
-  </head>
-  <body>
-    <center>
-    <h1>Pick your Bets</h1>
-    <p id="counter">Please select which bets you'd like.</p>
-    <button id="button1">1</button>
-    <button id="button2">2</button>
-    <button id="button3">3</button>
-    <button id="button4">4</button>
-    <button id="button5">5</button>
-    <button id="button6">6</button>
-    <button id="button7">7</button>
-    <br>
-    <button id="buttonA">a</button>
-    <button id="buttonB">b</button>
-    <button id="buttonC">c</button>
-    <button id="buttonD">d</button>
-    <button id="buttonE">e</button>
-    <button id="buttonF">f</button>
-    <button id="buttonG">g</button>
-    </center>
-  </body>
-  <script src="client.js"></script>
+   <head>
+      <meta charset="utf-8">
+      <title>TurtleBet</title>
+   </head>
+   <body>
+      <div>
+         <h3>Win TurtleCoin by guessing what the last digit of the next TurtleCoin block hash will be! </h3>
+         <h2>Pick Your Winning Digits</h2>
+      </div>
+      <div data-toggle="buttons" class="btn-group btn-group-lg btn-group-toggle d-none d-md-block">
+         <label class="btn btn-outline-info"><input type="checkbox" value="0" id="button0">
+         0
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="1" id="button1">
+         1
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="2" id="button2">
+         2
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="3" id="button3">
+         3
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="4" id="button4">
+         4
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="5" id="button5">
+         5
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="6" id="button6">
+         6
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="7" id="button7">
+         7
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="8" id="button8">
+         8
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="9" id="button9">
+         9
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="a" id="buttonA">
+         a
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="b" id="buttonB">
+         b
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="c" id="buttonC">
+         c
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="d" id="buttonD">
+         d
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="e" id="buttonE">
+         e
+         </label><label class="btn btn-outline-info"><input type="checkbox" value="f" id="buttonF">
+         f
+         </label>
+         <br><br>
+         <button class="btn btn-outline-info">Clear Choices</button>
+         <button class="btn btn-outline-info">Random</button>
+         <button class="btn btn-outline-info">Red</button>
+         <button class="btn btn-outline-info">Black</button>
+         <p>What TRTL address should we send your winnings to?</p>
+         <input type="text" size="60"placeholder="Regular, Integrated and Sub-addresses are supported..." required="required" class="form-control">
+         <button type="submit" class="btn btn-lg btn-info">Create a Bet Address and Send Your Bet!</button>
+      </div>
+   </body>
+   <script src="client.js"></script>
 </html>
